@@ -1,6 +1,7 @@
 module V1
   class UsersController < ApplicationController
-    skip_before_action :authenticate_user_from_token!, only: [:create]
+    include ErrorSerializer
+    skip_before_action :authenticate_user_from_token!, only: [:create, :signup]
 
     # POST /v1/users
     # ${token} string
@@ -25,6 +26,16 @@ module V1
         render json: @user, serializer: V1::CreateSerializer, root: nil
       else
         render json: { error: t('user_create_error') }, status: :unprocessable_entity
+      end
+    end
+
+    def signup
+      @user = User.new(signup_params)
+
+      if @user.save
+        render json: @user, serializer: V1::CreateSerializer, root: nil
+      else
+        render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
       end
     end
 
@@ -71,6 +82,10 @@ module V1
 
     private
     # First Level Oauth Keys
+    def signup_params
+      params.require(:user).permit(:email, :display_name, :password, :password_confirmation)
+    end
+
     def user_params
       params.require(:user).permit(:token, :stripe_id, :provider, :refreshToken, {:profile => facebook_profile_params})
     end
