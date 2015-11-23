@@ -21,15 +21,17 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate_with_auth_token auth_token
-    unless auth_token.include?(':')
+    santizedToken = auth_token.gsub(/\s/,'').gsub(/Bearer/,'')
+
+    unless santizedToken.include?(':')
       authentication_error
       return
     end
 
-    user_uuid = auth_token.split(':').first
+    user_uuid = santizedToken.split(':').first
     user = User.where(uuid: user_uuid).first
 
-    if user && Devise.secure_compare(user.access_token, auth_token)
+    if user && Devise.secure_compare(user.access_token, santizedToken)
       # User can access
       sign_in user, store: false
     else
