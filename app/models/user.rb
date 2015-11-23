@@ -4,11 +4,15 @@ class User < ActiveRecord::Base
          :validatable,
          :recoverable,
          :trackable
+
+  after_create :update_access_token!
+
   # Validations
   validates :display_name, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
   has_many :authentications
+  has_many :phones, as: :phoneable, dependent: :destroy
 
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]

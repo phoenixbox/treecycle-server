@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151021210204) do
+ActiveRecord::Schema.define(version: 20151119161347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,20 @@ ActiveRecord::Schema.define(version: 20151021210204) do
 
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin
 
+  create_table "phones", force: :cascade do |t|
+    t.string   "number",                         null: false
+    t.string   "authy_id"
+    t.string   "iso2"
+    t.string   "calling_code"
+    t.boolean  "verified",       default: false, null: false
+    t.integer  "phoneable_id"
+    t.string   "phoneable_type"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "phones", ["authy_id"], name: "index_phones_on_authy_id", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -58,6 +72,7 @@ ActiveRecord::Schema.define(version: 20151021210204) do
     t.string   "uuid"
     t.string   "access_token"
     t.string   "roles",                  default: [], null: false, array: true
+    t.string   "stripe_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
