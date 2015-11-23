@@ -31,19 +31,19 @@ module V1
     end
 
     def facebook_username
-      @options[:facebook_profile].username
+      @options[:facebook_profile] ? @options[:facebook_profile].username : ''
     end
 
     def facebook_display_name
-      @options[:facebook_profile].display_name
+      @options[:facebook_profile] ? @options[:facebook_profile].display_name : ''
     end
 
     def facebook_photo_url
-      @options[:facebook_profile].photo_url
+      @options[:facebook_profile] ? @options[:facebook_profile].photo_url : ''
     end
 
     def facebook_token
-      @options[:facebook_profile].token
+      @options[:facebook_profile] ? @options[:facebook_profile].token : ''
     end
   end
 end

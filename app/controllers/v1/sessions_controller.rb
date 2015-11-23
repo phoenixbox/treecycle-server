@@ -12,9 +12,27 @@ module V1
         sign_in :user, @user
         # Implicit namespaced to V1::SessionSerializer
         auth = @user.authentications.find_by_provider('facebook')
-        profile = FacebookProfile.find_by_authentication_id(auth.id)
+        # TODO: Rermove mix of Social profile into session
+        if auth
+          profile = FacebookProfile.find_by_authentication_id(auth.id)
+          render json: @user, facebook_profile: profile, serializer: SessionSerializer, root: nil
+        else
+          render json: @user, serializer: SessionSerializer, root: nil
+        end
 
-        render json: @user, facebook_profile: profile, serializer: SessionSerializer, root: nil
+      else
+        invalid_login_attempt
+      end
+    end
+
+    # POST /v1/sign-in
+    def create_from_email
+      @user = User.find_for_database_authentication(email: params[:email])
+      return invalid_login_attempt unless @user
+
+      if @user.valid_password?(params[:password])
+        sign_in :user, @user
+        render json: @user, serializer: SessionSerializer, root: nil
       else
         invalid_login_attempt
       end
