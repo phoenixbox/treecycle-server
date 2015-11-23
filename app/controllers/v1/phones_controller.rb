@@ -36,7 +36,7 @@ module V1
     end
 
     private
-    # First Level Oauth Keys
+    
     def phone_params
       params.require(:phone).permit(:number, :authy_id, :iso2, :calling_code, :verified, :phoneable_id, :phoneable_type)
     end

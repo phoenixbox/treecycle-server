@@ -11,11 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151119161347) do
+ActiveRecord::Schema.define(version: 20151123114628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "citext"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string   "label",                                                    null: false
+    t.decimal  "lat",                precision: 10, scale: 6
+    t.decimal  "lng",                precision: 10, scale: 6
+    t.integer  "type_cd",                                                  null: false
+    t.jsonb    "address_components",                          default: {}, null: false
+    t.integer  "addressable_id"
+    t.string   "addressable_type"
+    t.text     "description"
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
+  end
+
+  add_index "addresses", ["address_components"], name: "index_addresses_on_address_components", using: :gin
+  add_index "addresses", ["type_cd"], name: "index_addresses_on_type_cd", using: :btree
 
   create_table "authentications", force: :cascade do |t|
     t.string   "uid",        null: false

@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   # Associations
   has_many :authentications
   has_many :phones, as: :phoneable, dependent: :destroy
+  has_many :addresses, as: :addressable, dependent: :destroy
 
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]
