@@ -9,7 +9,7 @@ module V1
 
     # Creates an user
     def create
-      # Does an authentication exist for the user
+      # Does an authentication exist for the user && the provider
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
 
       if !auth
@@ -28,10 +28,51 @@ module V1
       end
     end
 
+    def show
+      @user = User.find(params[:id])
+
+      if @user
+        render json: @user, serializer: V1::UserSerializer, root: nil
+      else
+        render json: { error: t('user_show_error') }, status: :unprocessable_entity
+      end
+    end
+
+    def update
+      @user = User.find(params[:id])
+
+      if @user.update!(user_params)
+        redirect_to @user
+      else
+        render json: { error: t('user_update_error') }, status: :unprocessable_entity
+      end
+    end
+
+    def stripe_id
+      @user = User.find(params[:id])
+
+      if @user
+        render json: @user, serializer: V1::StripeIdSerializer, root: nil
+      else
+        render json: { error: "No user exists for provided id" }, status: 400
+      end
+    end
+
+    def phones
+      user = User.find(params[:user_id])
+
+      if user
+        @phones = user.phones
+        render json: @phones, each_serializer: V1::PhoneSerializer, root: nil
+      else
+        render json: { error: "No user exists for provided id" }, status: 400
+      end
+    end
+
     private
     # First Level Oauth Keys
     def user_params
-      params.require(:user).permit(:token, :provider, :refreshToken, {:profile => facebook_profile_params})
+      params.require(:user).permit(:token, :stripe_id, :provider, :refreshToken, {:profile => facebook_profile_params})
     end
     # Second Level Profile Keys
     def facebook_profile_params
