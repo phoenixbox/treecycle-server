@@ -3,7 +3,7 @@ module ErrorSerializer
     return if errors.nil?
 
     json = {}
-    new_hash = errors.to_hash(true).map do |key, message|
+    new_hash = errors.to_hash.map do |key, message|
       {
         id: key,
         title: message.join(". ") + "."
@@ -14,3 +14,14 @@ module ErrorSerializer
     json
    end
  end
+=begin
+  JSON API spec errors
+ {
+   "errors": [
+     {
+       "id": "name",
+       "title": "Name cannot be empty"
+     } // ...
+   ]
+ }
+=end
