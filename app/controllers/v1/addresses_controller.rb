@@ -1,7 +1,10 @@
 module V1
   class AddressesController < ApplicationController
-    skip_before_action :authenticate_user_from_token!, only: [:create]
+    include ErrorSerializer
+
     def index
+      # Should have a consistent params naming convetion
+      # Convert these params to address_params
       @addresses = []
       if (params[:addressable_id] && params[:addressable_type])
         klass = params[:addressable_type].capitalize.constantize
@@ -33,17 +36,40 @@ module V1
     end
 
     def create
-      binding.pry
-      @address = Address.where(address_params).first_or_initialize
+      klass = address_params[:addressable_type].capitalize.constantize
+      addresses = klass.find(address_params[:addressable_id]).addresses
 
-      if @address.save
-        render json: @address, serializer: V1::AddressSerializer, root: nil
+      if addresses
+        coords = address_coords(addresses)
+        existing_address = existing_address(coords)
+      end
+
+      if existing_address
+        errors = {:errors => {:id => 'address', :title => 'already exists'}}
+        render json: errors, status: :unprocessable_entity
       else
-        render json: { error: t('address_create_error') }, status: :unprocessable_entity
+        @address = Address.where(address_params).new
+
+        if @address.save
+          render json: @address, serializer: V1::AddressSerializer, root: nil
+        else
+          render json: ErrorSerializer.serialize(@address.errors), status: :unprocessable_entity
+        end
       end
     end
 
     private
+
+    def address_coords addresses
+      addresses.map{ |ad| { lat: ad[:lat].to_s, lng: ad[:lng].to_s}}
+    end
+
+    def existing_address(coords)
+      # Round to the 6 precision cosntraint in the db
+      latParam = address_params[:lat].round(6).to_s
+      lngParam = address_params[:lng].round(6).to_s
+      coords.find {|coord| coord[:lat]==latParam && coord[:lng]==lngParam}
+    end
 
     def address_params
     	convert_lat_long_to_decimal
