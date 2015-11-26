@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :addresses, only: [:index, :create, :show]
     resources :users, only: [:create, :update] do
       resources :phones, only: [:create]
+      resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
