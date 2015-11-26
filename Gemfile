@@ -11,9 +11,11 @@ gem 'simple_enum', '~> 2.1.1'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'jquery-rails'
 gem 'uglifier', '>= 1.3.0'
+gem "binding_of_caller"
 
 group :development, :test do
   gem 'faker'
+  gem "better_errors"
   gem 'byebug'
   gem 'web-console', '~> 2.0'
   gem 'spring'
