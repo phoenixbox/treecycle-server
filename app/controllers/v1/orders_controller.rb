@@ -52,9 +52,8 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if user
-        invalid_orders = user.orders.select {|order| order.status.to_s == 'invalid'})
-        
-        puts invalid_orders
+        invalid_orders = user.orders.by_status(:incomplete)
+
         if invalid_orders
           errors = invalid_order_errors(invalid_orders)
           render json: errors, status: :unprocessable_entity
