@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module ErrorSerializer
   def ErrorSerializer.serialize(errors)
     return if errors.nil?
@@ -5,7 +7,7 @@ module ErrorSerializer
     json = {}
     new_hash = errors.to_hash.map do |key, message|
       {
-        id: key,
+        id: SecureRandom.uuid,
         title: message.join(". ") + "."
       }
     end.flatten
