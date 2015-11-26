@@ -1,0 +1,9 @@
+---
+  - "invalid"
+  - "valid"
+  - "charged"
+  - "paid"
+  - "processing"
+  - "delivered"
+  - "refunded"
+  - "disputed"

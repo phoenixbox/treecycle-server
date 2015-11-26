@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151123114628) do
+ActiveRecord::Schema.define(version: 20151126005315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,32 @@ ActiveRecord::Schema.define(version: 20151123114628) do
   end
 
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin
+
+  create_table "orders", force: :cascade do |t|
+    t.string  "uuid",                         null: false
+    t.integer "status_cd"
+    t.integer "amount"
+    t.integer "address_id"
+    t.integer "phone_id"
+    t.string  "currency"
+    t.string  "charge_id"
+    t.text    "description"
+    t.boolean "paid",         default: false, null: false
+    t.integer "user_id"
+    t.integer "pickup_dates", default: [],                 array: true
+  end
+
+  add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
+
+  create_table "packages", force: :cascade do |t|
+    t.integer "type_cd"
+    t.integer "order_id"
+    t.string  "size_value"
+    t.string  "size_unit"
+  end
+
+  add_index "packages", ["order_id"], name: "index_packages_on_order_id", using: :btree
+  add_index "packages", ["type_cd"], name: "index_packages_on_type_cd", using: :btree
 
   create_table "phones", force: :cascade do |t|
     t.string   "number",                         null: false
