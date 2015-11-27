@@ -1,6 +1,7 @@
 module V1
   class AddressSerializer < ActiveModel::Serializer
-    attributes  :label,
+    attributes  :id,
+                :label,
                 :lat,
                 :lng,
                 :type,
