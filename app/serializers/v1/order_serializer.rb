@@ -7,11 +7,11 @@ module V1
                 :currency,
                 :description,
                 :paid,
+                :address_id,
+                :phone_id,
                 :created_at,
                 :updated_at
 
-    has_one :phone
-    has_one :address
     has_many :packages
 
     def status
