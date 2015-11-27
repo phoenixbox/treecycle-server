@@ -59,17 +59,19 @@ ActiveRecord::Schema.define(version: 20151126005315) do
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin
 
   create_table "orders", force: :cascade do |t|
-    t.string  "uuid",                         null: false
-    t.integer "status_cd"
-    t.integer "amount"
-    t.integer "address_id"
-    t.integer "phone_id"
-    t.string  "currency"
-    t.string  "charge_id"
-    t.text    "description"
-    t.boolean "paid",         default: false, null: false
-    t.integer "user_id"
-    t.integer "pickup_dates", default: [],                 array: true
+    t.string   "uuid",                         null: false
+    t.integer  "status_cd"
+    t.integer  "amount"
+    t.integer  "address_id"
+    t.integer  "phone_id"
+    t.string   "currency"
+    t.string   "charge_id"
+    t.text     "description"
+    t.boolean  "paid",         default: false, null: false
+    t.integer  "user_id"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "pickup_dates", default: [],                 array: true
   end
 
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree

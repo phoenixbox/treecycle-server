@@ -11,6 +11,7 @@ class CreateOrders < ActiveRecord::Migration
       t.text :description
       t.boolean :paid, default: false, null: false
       t.references :user, index: true
+      t.timestamps null: false
       t.integer :pickup_dates, array: true, default: []
     end
   end

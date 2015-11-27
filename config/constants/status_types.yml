@@ -1,6 +1,6 @@
 ---
-  - "invalid"
-  - "valid"
+  - "incomplete"
+  - "complete"
   - "charged"
   - "paid"
   - "processing"
