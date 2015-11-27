@@ -4,7 +4,5 @@ class Order < ActiveRecord::Base
 
   # Associations
   belongs_to :user
-  has_one :phone
-  has_one :address
   has_many :packages
 end
