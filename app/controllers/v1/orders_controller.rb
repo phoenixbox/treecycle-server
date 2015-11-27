@@ -23,16 +23,17 @@ module V1
             }
           }
         }
-
         render json: errors, status: :unprocessable_entity
       end
     end
 
+    # No good reason to have implemented uuids - remove in future
+    # params[:id] really means params[:uuid]
     def update
-      @order = Order.find(params[:id])
+      @order = Order.find_by_uuid(params[:id])
 
       if @order.update!(order_params)
-        redirect_to v1_order_path(@order)
+        redirect_to v1_user_order_path(@order.user.id , @order.id)
       else
         render json: { error: t('Order_update_error') }, status: :unprocessable_entity
       end
@@ -52,10 +53,10 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if user
-        invalid_orders = user.orders.by_status(:incomplete)
+        @incomplete_orders = user.orders.by_status("incomplete")
 
-        if invalid_orders
-          errors = invalid_order_errors(invalid_orders)
+        if @incomplete_orders.length > 0
+          errors = invalid_order_errors(@incomplete_orders)
           render json: errors, status: :unprocessable_entity
         else
           @order = user.orders.new(order_params)
