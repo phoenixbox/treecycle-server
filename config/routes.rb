@@ -13,8 +13,10 @@ Rails.application.routes.draw do
     end
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
-    get '/users/:user_id/phones', to: 'users#phones', as: 'users_phones'
+    # Why arent these just nested routes?
+    get '/users/:user_id/phones', to: 'phones#index', as: 'users_phones'
     get '/users/:user_id/addresses', to: 'addresses#index', as: 'users_adresses'
+
     post '/signup', to: 'users#signup', as: 'users_signup'
     post '/sign-in', to: 'sessions#create_from_email', as: 'users_signin'
   end

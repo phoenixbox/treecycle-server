@@ -5,6 +5,19 @@ module V1
     # @param String country_code
     # @param Object Phone
 
+    def index
+      # Should have a consistent params naming convetion
+      # Convert these params to address_params
+      @phones = []
+      if (phone_params[:phoneable_id] && phone_params[:phoneable_type])
+        klass = phone_params[:phoneable_type].capitalize.constantize
+        @phones = klass.find(phone_params[:phoneable_id]).phones
+      else
+        @phones = Phone.all
+      end
+      render json: @phones, each_serializer: V1::PhoneSerializer, root: nil
+    end
+
     def update
       @phone = Phone.find(params[:id])
 
@@ -36,7 +49,7 @@ module V1
     end
 
     private
-    
+
     def phone_params
       params.require(:phone).permit(:number, :authy_id, :iso2, :calling_code, :verified, :phoneable_id, :phoneable_type)
     end
