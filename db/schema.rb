@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151130014447) do
+ActiveRecord::Schema.define(version: 20151130110232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,14 +46,14 @@ ActiveRecord::Schema.define(version: 20151130014447) do
   end
 
   create_table "facebook_profiles", force: :cascade do |t|
-    t.string  "uid",               null: false
-    t.string  "username"
-    t.string  "display_name",      null: false
-    t.string  "email",             null: false
-    t.integer "authentication_id", null: false
-    t.string  "token",             null: false
-    t.hstore  "raw"
+    t.string  "uid",                            null: false
+    t.string  "display_name",                   null: false
+    t.string  "email",                          null: false
+    t.integer "authentication_id",              null: false
+    t.string  "token",                          null: false
+    t.jsonb   "raw",               default: {}, null: false
     t.text    "photo_url"
+    t.jsonb   "name",              default: {}, null: false
   end
 
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin

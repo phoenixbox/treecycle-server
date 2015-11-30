@@ -5,7 +5,6 @@ module V1
                 :id,
                 :uuid,
                 :email,
-                :facebook_username,
                 :facebook_display_name,
                 :facebook_photo_url,
                 :facebook_token
@@ -28,10 +27,6 @@ module V1
 
     def email
       object.email
-    end
-
-    def facebook_username
-      @options[:facebook_profile] ? @options[:facebook_profile].username : ''
     end
 
     def facebook_display_name

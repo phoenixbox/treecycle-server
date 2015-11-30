@@ -5,5 +5,5 @@ class Package < ActiveRecord::Base
   as_enum :type, PACKAGE_TYPES
 
   # Associations
-  belongs_to :order, dependent: :destroy
+  belongs_to :order
 end

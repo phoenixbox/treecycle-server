@@ -11,8 +11,8 @@ class User < ActiveRecord::Base
   validates :display_name, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
-  has_many :authentications
-  has_many :phone_users
+  has_many :authentications, dependent: :destroy
+  has_many :phone_users, dependent: :destroy
   has_many :phones, through: :phone_users
   has_many :addresses, as: :addressable, dependent: :destroy
   has_many :orders do
@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
        where(:status_cd => status)
     end
   end
+  has_many :orders, dependent: :destroy
 
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]
@@ -50,11 +51,11 @@ class User < ActiveRecord::Base
   def createFacebookProfile(auth, params)
     FacebookProfile.create({
       :uid => params['profile']['id'],
-      :username => params['profile']['username'],
-      :display_name => params['profile']['name'],
+      :display_name => params['profile']['display_name'],
+      :name => params['profile']['name'],
       :email => params['profile']['email'],
-      :photo_url => params['profile']['photo_url'],
       :raw => params['profile']['raw'],
+      :photo_url => params['profile']['photo_url'],
       :token => auth.token,
       :authentication_id => auth.id
     })

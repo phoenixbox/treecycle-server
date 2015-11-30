@@ -14,6 +14,7 @@ module V1
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
 
       if !auth
+        binding.pry
         @user = User.from_oauth(user_params)
       else
         # Auth exists - need to update the long lived token
@@ -87,17 +88,33 @@ module V1
     end
 
     def user_params
-      params.require(:user).permit(:token, :stripe_id, :provider, :refreshToken, {:profile => facebook_profile_params})
+      params.require(:user).permit(:token, {:profile => facebook_profile_params}, :provider, :stripe_id)
     end
     # Second Level Profile Keys
     def facebook_profile_params
-      [:id, :name, :email, :photo_url, :token, :token_type, :expiration, {:raw => facebook_raw_params} ]
+      [:id, :display_name, {:name => name_params}, :email, {:raw => facebook_raw_params}, :photo_url, :token, :token_type, :expiration ]
+    end
+
+    def name_params
+      [
+        :first,
+        :last
+      ]
     end
     # Third Level Raw Keys
     def facebook_raw_params
       [
+        :id,
         :name,
-        :id
+        :email,
+        :first_name,
+        :last_name,
+        :gender,
+        :link,
+        :locale,
+        :timezone,
+        :updated_time,
+        :verified
       ]
     end
   end
