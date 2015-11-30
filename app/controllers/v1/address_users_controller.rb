@@ -20,12 +20,12 @@ module V1
         addresses = user.addresses
         if addresses
           coords = address_coords(addresses)
-          existing_address = existing_address(coords)
+          @existing_address = existing_address(coords)
         end
 
-        if existing_address
-          errors = {:errors => {:id => 'address', :title => 'already exists'}}
-          render json: errors, status: :unprocessable_entity
+        if @existing_address
+          puts 'address already exists'
+          render json: @existing_address, serializer: V1::AddressSerializer, root: nil
         else
           @address = user.addresses.create!(address_params)
 
@@ -34,6 +34,31 @@ module V1
           else
             render json: ErrorSerializer.serialize(@address.errors), status: :unprocessable_entity
           end
+        end
+      else
+        authentication_error
+      end
+    end
+
+    def show
+      @address = Address.find(params[:id])
+
+      if @address
+        render json: @address, serializer: V1::AddressSerializer, root: nil
+      else
+        render json: { error: t('address_show_error') }, status: :unprocessable_entity
+      end
+    end
+
+    def update
+      user = User.find_by_id(params[:user_id])
+
+      if (authorize_user(user))
+        @address = user.addresses.find_by_id(params[:id])
+        if @address.update!(address_params)
+          redirect_to v1_user_address_path(user.id , @address.id)
+        else
+          render json: { error: t('Order_update_error') }, status: :unprocessable_entity
         end
       else
         authentication_error
@@ -56,7 +81,7 @@ module V1
     def address_params
     	convert_lat_long_to_decimal
 
-    	params.require(:address).permit(:label, :type_cd, :lat, :lng, {:address_components => address_components_params}, :description)
+    	params.require(:address_user).permit(:label, :type_cd, :lat, :lng, {:address_components => address_components_params}, :description)
     end
 
     # Setting to an empty array means that values must be valid scalar values - (number or a chunk of text)
@@ -65,7 +90,11 @@ module V1
     end
 
     def convert_lat_long_to_decimal
-      [:lat, :lng].each {|param| params[:address][param] = params[:address][param].to_d}
+      [:lat, :lng].each do |param|
+        if params[:address_user][param]
+          params[:address_user][param] = params[:address_user][param].to_d
+        end
+      end
     end
   end
 end
