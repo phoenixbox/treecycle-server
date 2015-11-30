@@ -18,20 +18,32 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def authorize_user(user)
+    auth_token = request.headers['Authorization']
+    santized_token = sanitize_token(auth_token)
+    token_uuid = santized_token.split(':').first
+
+    user.uuid == token_uuid
+  end
+
   private
 
-  def authenticate_with_auth_token auth_token
-    santizedToken = auth_token.gsub(/\s/,'').gsub(/Bearer/,'')
+  def sanitize_token(token)
+    token.gsub(/\s/,'').gsub(/Bearer/,'')
+  end
 
-    unless santizedToken.include?(':')
+  def authenticate_with_auth_token auth_token
+    santized_token = sanitize_token(auth_token)
+
+    unless santized_token.include?(':')
       authentication_error
       return
     end
 
-    user_uuid = santizedToken.split(':').first
+    user_uuid = santized_token.split(':').first
     user = User.where(uuid: user_uuid).first
 
-    if user && Devise.secure_compare(user.access_token, santizedToken)
+    if user && Devise.secure_compare(user.access_token, santized_token)
       # User can access
       sign_in user, store: false
     else
