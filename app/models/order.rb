@@ -7,6 +7,8 @@ class Order < ActiveRecord::Base
   has_many :packages, dependent: :destroy
   has_many :pickup_dates, dependent: :destroy
 
+  has_one :address
+
   # Nested Attrs
   accepts_nested_attributes_for :pickup_dates
 end

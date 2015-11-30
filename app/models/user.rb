@@ -14,13 +14,15 @@ class User < ActiveRecord::Base
   has_many :authentications, dependent: :destroy
   has_many :phone_users, dependent: :destroy
   has_many :phones, through: :phone_users
-  has_many :addresses, as: :addressable, dependent: :destroy
+
+  has_many :address_users, dependent: :destroy
+  has_many :addresses, through: :address_users
+
   has_many :orders do
     def by_status(status)
        where(:status_cd => status)
     end
   end
-  has_many :orders, dependent: :destroy
 
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]

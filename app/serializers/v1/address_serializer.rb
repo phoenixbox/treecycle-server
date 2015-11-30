@@ -6,8 +6,6 @@ module V1
                 :lng,
                 :type,
                 :address_components,
-                :addressable_id,
-                :addressable_type,
                 :description,
                 :created_at,
                 :updated_at

@@ -10,4 +10,7 @@ class Address < ActiveRecord::Base
 
   # Associations
   belongs_to :addressable, polymorphic: true, dependent: :destroy
+
+  has_many :address_users, dependent: :destroy
+  has_many :users, through: :address_users
 end
