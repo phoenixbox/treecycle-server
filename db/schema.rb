@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151126005315) do
+ActiveRecord::Schema.define(version: 20151130014447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 20151126005315) do
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin
 
   create_table "orders", force: :cascade do |t|
-    t.string   "uuid",                         null: false
+    t.string   "uuid",                        null: false
     t.integer  "status_cd"
     t.integer  "amount"
     t.integer  "address_id"
@@ -67,11 +67,10 @@ ActiveRecord::Schema.define(version: 20151126005315) do
     t.string   "currency"
     t.string   "charge_id"
     t.text     "description"
-    t.boolean  "paid",         default: false, null: false
+    t.boolean  "paid",        default: false, null: false
     t.integer  "user_id"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.integer  "pickup_dates", default: [],                 array: true
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
@@ -86,19 +85,35 @@ ActiveRecord::Schema.define(version: 20151126005315) do
   add_index "packages", ["order_id"], name: "index_packages_on_order_id", using: :btree
   add_index "packages", ["type_cd"], name: "index_packages_on_type_cd", using: :btree
 
+  create_table "phone_users", force: :cascade do |t|
+    t.integer  "phone_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "phone_users", ["phone_id"], name: "index_phone_users_on_phone_id", using: :btree
+  add_index "phone_users", ["user_id"], name: "index_phone_users_on_user_id", using: :btree
+
   create_table "phones", force: :cascade do |t|
-    t.string   "number",                         null: false
+    t.string   "number",                       null: false
     t.string   "authy_id"
     t.string   "iso2"
     t.string   "calling_code"
-    t.boolean  "verified",       default: false, null: false
-    t.integer  "phoneable_id"
-    t.string   "phoneable_type"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.boolean  "verified",     default: false, null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   add_index "phones", ["authy_id"], name: "index_phones_on_authy_id", unique: true, using: :btree
+
+  create_table "pickup_dates", force: :cascade do |t|
+    t.integer "order_id"
+    t.integer "date",     limit: 8
+  end
+
+  add_index "pickup_dates", ["date"], name: "index_pickup_dates_on_date", using: :btree
+  add_index "pickup_dates", ["order_id"], name: "index_pickup_dates_on_order_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false

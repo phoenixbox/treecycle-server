@@ -8,6 +8,7 @@ module V1
     def index
       # Should have a consistent params naming convetion
       # Convert these params to address_params
+      
       @phones = []
       if (phone_params[:phoneable_id] && phone_params[:phoneable_type])
         klass = phone_params[:phoneable_type].capitalize.constantize

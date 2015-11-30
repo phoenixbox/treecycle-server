@@ -12,9 +12,9 @@ class User < ActiveRecord::Base
   validates :email, presence: true, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
   has_many :authentications
-  has_many :phones, as: :phoneable, dependent: :destroy
+  has_many :phone_users
+  has_many :phones, through: :phone_users
   has_many :addresses, as: :addressable, dependent: :destroy
-
   has_many :orders do
     def by_status(status)
        where(:status_cd => status)

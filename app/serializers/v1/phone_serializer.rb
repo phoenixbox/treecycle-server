@@ -7,8 +7,6 @@ module V1
                 :iso2,
                 :calling_code,
                 :verified,
-                :phoneable_id,
-                :phoneable_type,
                 :created_at,
                 :updated_at
   end

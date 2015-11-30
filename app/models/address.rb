@@ -9,5 +9,5 @@ class Address < ActiveRecord::Base
   as_enum :type, ADDRESS_TYPES
 
   # Associations
-  belongs_to :addressable, polymorphic: true
+  belongs_to :addressable, polymorphic: true, dependent: :destroy
 end

@@ -1,4 +1,5 @@
 class Phone < ActiveRecord::Base
   # Associations
-  belongs_to :phoneable, polymorphic: true
+  has_many :phone_users
+  has_many :users, through: :phone_users
 end

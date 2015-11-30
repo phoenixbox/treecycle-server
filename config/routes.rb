@@ -8,13 +8,14 @@ Rails.application.routes.draw do
     resources :phones, only: [:update, :show]
     resources :addresses, only: [:index, :create, :show]
     resources :users, only: [:create, :update] do
-      resources :phones, only: [:create]
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
     # Why arent these just nested routes?
-    get '/users/:user_id/phones', to: 'phones#index', as: 'users_phones'
+    get '/users/:user_id/phones', to: 'phone_users#index', as: 'get_user_phones'
+    post '/users/:user_id/phones', to: 'phone_users#create', as: 'post_user_phones'
+
     get '/users/:user_id/addresses', to: 'addresses#index', as: 'users_adresses'
 
     post '/signup', to: 'users#signup', as: 'users_signup'
