@@ -30,12 +30,21 @@ module V1
     # No good reason to have implemented uuids - remove in future
     # params[:id] really means params[:uuid]
     def update
-      @order = Order.find_by_uuid(params[:id])
+      user = User.find_by_id(params[:user_id])
 
-      if @order.update!(order_params)
-        redirect_to v1_user_order_path(@order.user.id , @order.id)
+      if (authorize_user(user))
+        @order = Order.find_by_uuid(params[:id])
+        if @order.user.id == user.id
+          if @order.update!(order_params)
+            redirect_to v1_user_order_path(@order.user.id , @order.id)
+          else
+            render json: { error: t('Order_update_error') }, status: :unprocessable_entity
+          end
+        else
+          authentication_error
+        end
       else
-        render json: { error: t('Order_update_error') }, status: :unprocessable_entity
+        authentication_error
       end
     end
 
@@ -76,7 +85,8 @@ module V1
     private
 
     def order_params
-      params.require(:order).permit(:uuid, :status_cd, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, :pickup_dates)
+      params.require(:order).permit(:uuid, :status_cd, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, pickup_dates_attributes: [:date,
+ :user_id])
     end
 
     def invalid_order_errors orders
@@ -93,6 +103,5 @@ module V1
         }
       end
     end
-
   end
 end

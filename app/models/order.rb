@@ -3,6 +3,10 @@ class Order < ActiveRecord::Base
   validates :uuid, presence: true, uniqueness: true
 
   # Associations
-  belongs_to :user
+  belongs_to :user, dependent: :destroy
   has_many :packages
+  has_many :pickup_dates
+
+  # Nested Attrs
+  accepts_nested_attributes_for :pickup_dates
 end

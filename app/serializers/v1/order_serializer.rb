@@ -13,6 +13,7 @@ module V1
                 :updated_at
 
     has_many :packages
+    has_many :pickup_dates
 
     def status
       object.status.to_s
