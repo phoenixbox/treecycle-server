@@ -11,4 +11,8 @@ class Order < ActiveRecord::Base
 
   # Nested Attrs
   accepts_nested_attributes_for :pickup_dates
+
+  after_touch do |order|
+    puts "The order has been touched - update order status if all required attrs are set"
+  end
 end
