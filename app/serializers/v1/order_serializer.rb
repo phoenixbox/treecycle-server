@@ -7,6 +7,7 @@ module V1
                 :currency,
                 :description,
                 :paid,
+                :charge_id,
                 :address_id,
                 :phone_id,
                 :created_at,
