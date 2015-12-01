@@ -14,7 +14,6 @@ module V1
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
 
       if !auth
-        binding.pry
         @user = User.from_oauth(user_params)
       else
         # Auth exists - need to update the long lived token
@@ -54,7 +53,7 @@ module V1
       @user = User.find(params[:id])
 
       if @user.update!(user_params)
-        redirect_to @user
+        redirect_to v1_user_path(@user)
       else
         render json: { error: t('user_update_error') }, status: :unprocessable_entity
       end

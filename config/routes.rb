@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
     # resources :phones, only: [:update, :show]
     resources :addresses, only: [:index, :create, :show]
-    resources :users, only: [:create, :update] do
+    resources :users, only: [:create, :update, :show] do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
 
