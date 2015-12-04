@@ -9,7 +9,9 @@ module V1
                 :paid,
                 :charge_id,
                 :address_id,
+                :address,
                 :phone_id,
+                :phone,
                 :created_at,
                 :updated_at
 
@@ -18,6 +20,14 @@ module V1
 
     def status
       object.status.to_s
+    end
+
+    def address
+      Address.find_by_id(object.address_id)
+    end
+
+    def phone
+      Phone.find_by_id(object.phone_id)
     end
   end
 end
