@@ -6,7 +6,6 @@ class Order < ActiveRecord::Base
   belongs_to :user
   has_many :packages, dependent: :destroy
   has_many :pickup_dates, dependent: :destroy
-
   has_one :address
 
   # Nested Attrs
@@ -14,6 +13,15 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :packages
 
   after_touch do |order|
-    puts "The order has been touched - update order status if all required attrs are set"
+    mark_state_for_attributes(order)
+  end
+
+  private
+
+  def mark_state_for_attributes(order)
+      if (order.address_id && order.packages.length && order.phone_id && order.pickup_dates && order.paid)
+        order.status = :paid
+        order.save
+      end
   end
 end

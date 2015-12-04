@@ -9,8 +9,7 @@ class Address < ActiveRecord::Base
   as_enum :type, ADDRESS_TYPES
 
   # Associations
-  belongs_to :addressable, polymorphic: true, dependent: :destroy
-
   has_many :address_users, dependent: :destroy
   has_many :users, through: :address_users
+  belongs_to :order, touch: true
 end
