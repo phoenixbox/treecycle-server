@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     put '/users/:user_id/addresses/:id', to: 'address_users#update', as: 'put_user_addresses'
 
     delete '/users/:user_id/orders/:order_id/packages/:id' => 'packages#destroy',:via => :get
+    delete '/users/:user_id/orders/:order_id/pickup-dates/:id' => 'pickup_dates#destroy',:via => :get
 
     post '/signup', to: 'users#signup', as: 'users_signup'
     post '/sign-in', to: 'sessions#create_from_email', as: 'users_signin'
