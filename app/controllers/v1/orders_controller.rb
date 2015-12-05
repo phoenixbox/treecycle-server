@@ -100,7 +100,7 @@ module V1
     private
 
     def order_params
-      params.require(:order).permit(:uuid, :status_cd, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:date,
+      params.require(:order).permit(:uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:date,
  :user_id])
     end
 

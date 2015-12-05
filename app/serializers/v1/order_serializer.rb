@@ -12,6 +12,7 @@ module V1
                 :address,
                 :phone_id,
                 :phone,
+                :cancelled,
                 :created_at,
                 :updated_at
 
