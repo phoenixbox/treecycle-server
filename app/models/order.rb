@@ -11,7 +11,7 @@ class Order < ActiveRecord::Base
   has_one :address
 
   # Nested Attrs
-  accepts_nested_attributes_for :pickup_dates
+  accepts_nested_attributes_for :pickup_dates, allow_destroy: true
   accepts_nested_attributes_for :packages
 
   after_update :mark_state_for_attributes
