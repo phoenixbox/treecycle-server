@@ -11,5 +11,5 @@ class Address < ActiveRecord::Base
   # Associations
   has_many :address_users, dependent: :destroy
   has_many :users, through: :address_users
-  belongs_to :order, touch: true
+  belongs_to :order
 end
