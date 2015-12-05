@@ -82,6 +82,21 @@ module V1
       end
     end
 
+    def destroy
+      user = User.find_by_id(params[:user_id])
+
+      if (authorize_user(user))
+        order = Order.find_by_uuid(params[:id])
+        if order.destroy!
+          redirect_to v1_user_orders_path(user.id)
+        else
+          render json: { error: t('couldnt_delete_order') }, status: :unprocessable_entity
+        end
+      else
+        authentication_error
+      end
+    end
+
     private
 
     def order_params
