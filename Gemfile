@@ -13,6 +13,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'jquery-rails'
 gem 'uglifier', '>= 1.3.0'
 gem "binding_of_caller"
+gem 'therubyracer', '~> 0.12.2'
 
 group :development, :test do
   gem 'faker'
