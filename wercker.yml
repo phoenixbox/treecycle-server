@@ -1,4 +1,4 @@
-box: ruby
+box: ruby:2.2.3
 
 services:
   - id: postgres
@@ -7,7 +7,11 @@ services:
       POSTGRES_USER: $POSTGRES_USER
 build:
   steps:
-    - bundle-install
+    - script:
+        name: bundle install
+        code: |
+             bundle config build.nokogiri --use-system-libraries
+             bundle install
 
     - rails-database-yml:
         service: postgresql-docker
