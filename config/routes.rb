@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root to: 'home#hello'
   devise_for :user, only: []
 
   namespace :v1, defaults: { format: :json } do
