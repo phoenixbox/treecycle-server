@@ -4,3 +4,9 @@ namespace :app do
     sh "rails s -b 0.0.0.0 -p 8000"
   end
 end
+namespace :heroku do
+  desc "Staging Console"
+  task staging_console: :environment do
+    sh "heroku run console -a rmct-server-staging"
+  end
+end
