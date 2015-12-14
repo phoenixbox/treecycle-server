@@ -33,11 +33,10 @@ class User < ActiveRecord::Base
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]
 
-
     begin
       user = User.new({
         :email => params['profile']['email'],
-        :display_name => params['profile']['name'],
+        :display_name => params['profile']['display_name'],
         :uuid => "",
         :password => password,
         :password_confirmation => password
@@ -46,13 +45,12 @@ class User < ActiveRecord::Base
       user.createAuthentication(params)
       user
     rescue ActiveRecord::RecordInvalid => invalid
-        puts user.errors.messages
        user
     end
   end
 
   def createAuthentication(params)
-    auth = self.authentications.create({
+    auth = self.authentications.create!({
       :uid => params['profile']['id'],
       :provider => params['provider'],
       :token => params['profile']['token'],
@@ -64,7 +62,7 @@ class User < ActiveRecord::Base
   end
 
   def createFacebookProfile(auth, params)
-    FacebookProfile.create({
+    FacebookProfile.create!({
       :uid => params['profile']['id'],
       :display_name => params['profile']['display_name'],
       :name => params['profile']['name'],

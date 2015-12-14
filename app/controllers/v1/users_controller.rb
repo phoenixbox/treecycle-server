@@ -27,7 +27,7 @@ module V1
       end
 
 
-      if @user && @user.save
+      if @user
         render json: @user, serializer: V1::CreateSerializer, root: nil
       else
         render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
