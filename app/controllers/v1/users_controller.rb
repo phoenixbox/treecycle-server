@@ -102,7 +102,8 @@ module V1
     def name_params
       [
         :first,
-        :last
+        :last,
+        :middle
       ]
     end
     # Third Level Raw Keys
@@ -113,6 +114,7 @@ module V1
         :email,
         :first_name,
         :last_name,
+        :middle_name,
         :gender,
         :link,
         :locale,

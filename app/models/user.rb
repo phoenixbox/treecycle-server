@@ -1,15 +1,13 @@
 class User < ActiveRecord::Base
   devise :database_authenticatable,
          :recoverable,
-         :validatable,
          :recoverable,
          :trackable
 
   after_create :update_access_token!
 
   # Validations
-  validates :display_name, presence: true
-  validates :email, presence: true, uniqueness: true, :format => { :with =>  Devise::email_regexp }
+  # validates :email, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
   has_many :authentications, dependent: :destroy
   has_many :phone_users, dependent: :destroy
@@ -24,9 +22,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def email_required?
+    false
+  end
+
+  def email_changed?
+    false
+  end
+
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]
-    puts '****** USER FROM OMNIAUTH!'
+
 
     begin
       user = User.new({
@@ -40,6 +46,7 @@ class User < ActiveRecord::Base
       user.createAuthentication(params)
       user
     rescue ActiveRecord::RecordInvalid => invalid
+        puts user.errors.messages
        user
     end
   end
