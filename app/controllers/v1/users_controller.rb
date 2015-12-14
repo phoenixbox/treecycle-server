@@ -1,7 +1,7 @@
 module V1
   class UsersController < ApplicationController
     include ErrorSerializer
-    skip_before_action :authenticate_user_from_token!, only: [:create, :signup]
+    skip_before_action :authenticate_user_from_token!, only: [:create, :signup, :google]
 
     # POST /v1/users
     # ${token} string
@@ -15,7 +15,7 @@ module V1
       if !auth
         @user = User.from_oauth(user_params)
 
-        if @user.errors
+        if !@user.errors.empty?
           render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
           return
         end
@@ -24,6 +24,27 @@ module V1
         auth.token = user_params['profile']['token']
         auth.save
         # Do need to add auth to token check?
+        @user = auth.user
+      end
+
+      if @user
+        render json: @user, serializer: V1::CreateSerializer, root: nil
+      else
+        render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
+      end
+    end
+
+    def google
+      auth = Authentication.where({uid: google_user_params['profile']['id'], provider: google_user_params['provider']}).take
+
+      if !auth
+        @user = User.from_google_oauth(google_user_params)
+
+        if !@user.errors.empty?
+          render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
+          return
+        end
+      else
         @user = auth.user
       end
 
@@ -92,11 +113,20 @@ module V1
     end
 
     def user_params
-      params.require(:user).permit(:token, {:profile => facebook_profile_params}, :provider, :stripe_id)
+      params.require(:user).permit(:token, {:profile => profile_params}, :provider, :stripe_id)
     end
+
+    def google_user_params
+      params.require(:user).permit(:token, {:profile => google_profile_params}, :provider, :stripe_id)
+    end
+
     # Second Level Profile Keys
-    def facebook_profile_params
+    def profile_params
       [:id, :display_name, {:name => name_params}, :email, {:raw => facebook_raw_params}, :photo_url, :token, :token_type, :expiration ]
+    end
+
+    def google_profile_params
+      [:id, :display_name, {:name => name_params}, :email, {:raw => google_raw_params}, :photo_url, :token, :token_type, :expiration ]
     end
 
     def name_params
@@ -106,6 +136,7 @@ module V1
         :middle
       ]
     end
+
     # Third Level Raw Keys
     def facebook_raw_params
       [
@@ -122,6 +153,33 @@ module V1
         :updated_time,
         :verified
       ]
+    end
+
+    def google_raw_params
+      [
+        :kind,
+        :etag,
+        {emails: [:value, :type]},
+        :objectType,
+        :id,
+        :displayName,
+        {:name => google_raw_name},
+        :url,
+        {:image => google_raw_image},
+        :isPlusUser,
+        :language,
+        :circledByCount,
+        :verified,
+        :domain
+      ]
+    end
+
+    def google_raw_image
+      [:url, :isDefault]
+    end
+
+    def google_raw_name
+      [:familyName, :givenName]
     end
   end
 end
