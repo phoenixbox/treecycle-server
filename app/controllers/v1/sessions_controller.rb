@@ -11,11 +11,20 @@ module V1
       if @user
         sign_in :user, @user
         # Implicit namespaced to V1::SessionSerializer
-        auth = @user.authentications.find_by_provider('facebook')
-        # TODO: Rermove mix of Social profile into session
-        if auth
-          profile = FacebookProfile.find_by_authentication_id(auth.id)
-          render json: @user, facebook_profile: profile, serializer: SessionSerializer, root: nil
+        fbAuth = @user.authentications.find_by_provider('facebook')
+        googleAuth = @user.authentications.find_by_provider('google')
+
+        if fbAuth || googleAuth
+          fbProfile = false
+          googleProfile = false
+          if fbAuth
+            fbProfile = FacebookProfile.find_by_authentication_id(fbAuth.id)
+          end
+          if googleAuth
+            googleProfile = GoogleProfile.find_by_authentication_id(googleAuth.id) || null
+          end
+
+          render json: @user, facebook_profile: fbProfile, google_profile: googleProfile, serializer: SessionSerializer, root: nil
         else
           render json: @user, serializer: SessionSerializer, root: nil
         end
@@ -41,6 +50,7 @@ module V1
     private
 
     def invalid_login_attempt
+      puts 'INVALID LOGIN ATTEMPT'
       warden.custom_failure!
       render json: {error: t('sessions_controller.invalid_login_attempt')}, status: :unprocessable_entity
     end

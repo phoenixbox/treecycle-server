@@ -7,7 +7,9 @@ module V1
                 :email,
                 :facebook_display_name,
                 :facebook_photo_url,
-                :facebook_token
+                :facebook_token,
+                :google_display_name,
+                :google_photo_url,
 
     def access_token
       object.access_token
@@ -39,6 +41,14 @@ module V1
 
     def facebook_token
       @options[:facebook_profile] ? @options[:facebook_profile].token : ''
+    end
+
+    def google_display_name
+      @options[:google_profile] ? @options[:google_profile].display_name : ''
+    end
+
+    def google_photo_url
+      @options[:google_profile] ? @options[:google_profile].photo_url : ''
     end
   end
 end
