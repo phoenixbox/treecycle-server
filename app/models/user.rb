@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   after_create :update_access_token!
 
   # Validations
-  validates :display_name, presence: true, uniqueness: true
+  validates :display_name, presence: true
   validates :email, presence: true, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
   has_many :authentications, dependent: :destroy
@@ -26,16 +26,22 @@ class User < ActiveRecord::Base
 
   def self.from_oauth(params)
     password = Devise.friendly_token[0,20]
-    user = User.create!({
-      :email => params['profile']['email'],
-      :display_name => params['profile']['name'],
-      :uuid => "",
-      :password => password,
-      :password_confirmation => password
-    })
+    puts '****** USER FROM OMNIAUTH!'
 
-    user.createAuthentication(params)
-    user
+    begin
+      user = User.new({
+        :email => params['profile']['email'],
+        :display_name => params['profile']['name'],
+        :uuid => "",
+        :password => password,
+        :password_confirmation => password
+      })
+      user.save!
+      user.createAuthentication(params)
+      user
+    rescue ActiveRecord::RecordInvalid => invalid
+       user
+    end
   end
 
   def createAuthentication(params)

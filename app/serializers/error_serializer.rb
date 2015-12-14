@@ -6,9 +6,13 @@ module ErrorSerializer
 
     json = {}
     new_hash = errors.to_hash.map do |key, message|
+      meta = {}
+      meta[key] = message.join(' ')
+
       {
         id: SecureRandom.uuid,
-        title: message.join(". ") + "."
+        title: key.to_s + ' ' + message[0] + ".",
+        meta: meta
       }
     end.flatten
     # set the json root and return
@@ -18,11 +22,16 @@ module ErrorSerializer
  end
 =begin
   JSON API spec errors
+  var jsonFormat =
  {
    "errors": [
      {
        "id": "name",
-       "title": "Name cannot be empty"
+       status: 400,
+       code: '',
+       detail: ''' ,
+       title: '',
+       meta: {}
      } // ...
    ]
  }

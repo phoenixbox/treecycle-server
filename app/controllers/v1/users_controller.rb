@@ -12,9 +12,13 @@ module V1
     def create
       # Does an authentication exist for the user && the provider
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
-
       if !auth
         @user = User.from_oauth(user_params)
+
+        if @user.errors
+          render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
+          return
+        end
       else
         # Auth exists - need to update the long lived token
         auth.token = user_params['profile']['token']
@@ -22,10 +26,11 @@ module V1
         @user = auth.user
       end
 
-      if @user.save
+
+      if @user && @user.save
         render json: @user, serializer: V1::CreateSerializer, root: nil
       else
-        render json: { error: t('user_create_error') }, status: :unprocessable_entity
+        render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
       end
     end
 
