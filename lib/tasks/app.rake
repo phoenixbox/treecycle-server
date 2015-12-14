@@ -3,6 +3,9 @@ namespace :app do
   task start: :environment do
     sh "rails s -b 0.0.0.0 -p 8000"
   end
+  task setup: :environment do
+    sh "rake environment db:drop db:create db:migrate"
+  end
 end
 namespace :heroku do
   desc "Staging Console"
