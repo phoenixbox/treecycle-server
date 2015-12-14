@@ -42,23 +42,43 @@ class User < ActiveRecord::Base
         :password_confirmation => password
       })
       user.save!
-      user.createAuthentication(params)
+      auth = user.createAuthentication(params)
+      user.createFacebookProfile(auth, params)
       user
     rescue ActiveRecord::RecordInvalid => invalid
        user
     end
   end
 
+  def self.from_google_oauth(params)
+    password = Devise.friendly_token[0,20]
+
+    begin
+      user = User.new({
+        :email => params['profile']['email'],
+        :display_name => params['profile']['display_name'],
+        :uuid => "",
+        :password => password,
+        :password_confirmation => password
+      })
+      user.save!
+      auth = user.createAuthentication(params)
+      user.createGoogleProfile(auth, params)
+      user
+    rescue ActiveRecord::RecordInvalid => invalid
+       user
+    end
+  end
+
+
   def createAuthentication(params)
-    auth = self.authentications.create!({
+    return self.authentications.create!({
       :uid => params['profile']['id'],
       :provider => params['provider'],
       :token => params['profile']['token'],
       :token_type => params['profile']['token_type'],
       :expiration => params['profile']['expiration']
     })
-
-    createFacebookProfile(auth, params)
   end
 
   def createFacebookProfile(auth, params)
@@ -70,6 +90,18 @@ class User < ActiveRecord::Base
       :raw => params['profile']['raw'],
       :photo_url => params['profile']['photo_url'],
       :token => auth.token,
+      :authentication_id => auth.id
+    })
+  end
+
+  def createGoogleProfile(auth, params)
+    GoogleProfile.create!({
+      :uid => params['profile']['id'],
+      :display_name => params['profile']['display_name'],
+      :name => params['profile']['name'],
+      :email => params['profile']['email'],
+      :raw => params['profile']['raw'],
+      :photo_url => params['profile']['photo_url'],
       :authentication_id => auth.id
     })
   end
