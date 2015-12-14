@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
 
+    post '/users-google', to: 'users#google', as: 'google_user'
     # Why arent these just nested routes?
     get '/users/:user_id/phones', to: 'phone_users#index', as: 'get_user_phones'
     get '/users/:user_id/phones/:id', to: 'phone_users#show', as: 'user_phone'

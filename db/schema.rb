@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204150204) do
+ActiveRecord::Schema.define(version: 20151214180734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,10 +45,10 @@ ActiveRecord::Schema.define(version: 20151204150204) do
   create_table "authentications", force: :cascade do |t|
     t.string   "uid",        null: false
     t.string   "provider",   null: false
-    t.string   "token",      null: false
-    t.string   "token_type", null: false
+    t.string   "token"
+    t.string   "token_type"
     t.integer  "user_id",    null: false
-    t.integer  "expiration", null: false
+    t.integer  "expiration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -65,6 +65,18 @@ ActiveRecord::Schema.define(version: 20151204150204) do
   end
 
   add_index "facebook_profiles", ["raw"], name: "index_facebook_profiles_on_raw", using: :gin
+
+  create_table "google_profiles", force: :cascade do |t|
+    t.string  "uid",                            null: false
+    t.string  "display_name"
+    t.jsonb   "name"
+    t.string  "email"
+    t.text    "photo_url"
+    t.jsonb   "raw",               default: {}, null: false
+    t.integer "authentication_id",              null: false
+  end
+
+  add_index "google_profiles", ["raw"], name: "index_google_profiles_on_raw", using: :gin
 
   create_table "orders", force: :cascade do |t|
     t.string   "uuid",                        null: false
