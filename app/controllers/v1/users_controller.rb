@@ -10,7 +10,7 @@ module V1
 
     # Creates an user
     def create
-      # Does an authentication exist for the user && the provider
+      # Find by provider name and id else create
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
       if !auth
         @user = User.from_oauth(user_params)
@@ -23,9 +23,9 @@ module V1
         # Auth exists - need to update the long lived token
         auth.token = user_params['profile']['token']
         auth.save
+        # Do need to add auth to token check?
         @user = auth.user
       end
-
 
       if @user
         render json: @user, serializer: V1::CreateSerializer, root: nil
