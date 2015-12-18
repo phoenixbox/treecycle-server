@@ -113,7 +113,7 @@ module V1
     end
 
     def user_params
-      params.require(:user).permit(:token, {:profile => profile_params}, :provider, :stripe_id)
+      params.require(:user).permit(:token, :email, {:profile => profile_params}, :provider, :stripe_id)
     end
 
     def google_user_params
