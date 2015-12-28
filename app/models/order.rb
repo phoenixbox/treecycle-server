@@ -16,17 +16,16 @@ class Order < ActiveRecord::Base
 
   after_update :mark_state_for_attributes
 
-
   private
 
   def mark_state_for_attributes
-      if self.status.to_s == "paid"
-        return
-      end
+    if self.status.to_s == "paid"
+      return
+    end
 
-      if self.address_id && self.packages.length && self.phone_id && self.pickup_dates
-        self.status = "paid"
-        self.save
-      end
+    if self.address_id && self.packages.length && self.phone_id && self.pickup_dates && self.paid
+      self.status = "paid"
+      self.save
+    end
   end
 end
