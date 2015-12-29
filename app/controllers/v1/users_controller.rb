@@ -10,11 +10,14 @@ module V1
 
     # Creates an user
     def create
-      # Find by provider name and id else create
+      # Assumes an authentication record exists for the social provider
+      # If not then its a new user signup
+      # This is poor implementation
+      new_user = false
       auth = Authentication.where({uid: user_params['profile']['id'], provider: user_params['provider']}).take
       if !auth
         @user = User.from_oauth(user_params)
-
+        new_user = true
         if !@user.errors.empty?
           render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
           return
@@ -28,7 +31,7 @@ module V1
       end
 
       if @user
-        render json: @user, serializer: V1::CreateSerializer, root: nil
+        render json: @user, new_user: new_user, serializer: V1::CreateSerializer, root: nil
       else
         render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
       end
@@ -59,7 +62,7 @@ module V1
       @user = User.new(signup_params)
 
       if @user.save
-        render json: @user, serializer: V1::CreateSerializer, root: nil
+        render json: @user, new_user: true, serializer: V1::CreateSerializer, root: nil
       else
         render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
       end
