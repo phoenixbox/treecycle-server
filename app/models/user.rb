@@ -50,6 +50,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.token_exists_for_attribute?(token, attribute)
+    where(":attribute = :token", {
+      attribute: attribute,
+      token: token
+    }).take
+  end
+
   def self.from_google_oauth(params)
     password = Devise.friendly_token[0,20]
 
@@ -69,7 +76,6 @@ class User < ActiveRecord::Base
        user
     end
   end
-
 
   def createAuthentication(params)
     return self.authentications.create!({
@@ -106,7 +112,26 @@ class User < ActiveRecord::Base
     })
   end
 
+  def regenerate_reset_password_token
+    token = generate_token_for("reset_password_token")
+    self.update({reset_password_token: token})
+  end
+
+  def regenerate_access_token
+    loop do
+      token = "#{self.uuid}:#{Devise.friendly_token}"
+      break token unless User.where(access_token: token).first
+    end
+  end
+
   private
+
+  def generate_token_for(attribute)
+    loop do
+      token = SecureRandom.uuid.gsub(/\-/,'')
+      break token unless User.token_exists_for_attribute?(token, attribute)
+    end
+  end
 
   def update_access_token!
     # Do I have access to the original params? or do they need to be passed in?

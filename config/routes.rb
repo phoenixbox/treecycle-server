@@ -11,6 +11,11 @@ Rails.application.routes.draw do
     resources :users, only: [:create, :update, :show] do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
+    resources :password_resets, only: [:create] do
+      collection do
+        post :reset
+      end
+    end
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
 
