@@ -13,18 +13,22 @@ module V1
     end
 
     def reset
-      if user = User.find_by({reset_password_token: params[:token]})
-        user.update({
-          password: params[:password],
-          reset_password_token: nil,
-          locked_at: nil,
-          failed_logins_count: 0
+      if @user = User.find_by({reset_password_token: params[:token]})
+        @user.update({
+          password: password_params['password'],
+          reset_password_token: nil
         })
-        user.regenerate_access_token
+        @user.regenerate_access_token
         render json: @user, serializer: V1::CreateSerializer, root: nil
       else
         render json: { error: t('reset_token_incorrect') }, status: :unprocessable_entity
       end
+    end
+
+    private
+
+    def password_params
+      params.require(:password_reset).permit(:password)
     end
   end
 end
