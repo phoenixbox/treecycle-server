@@ -36,12 +36,18 @@ module V1
     end
 
     def show
-      @phone = Phone.find(params[:id])
+      user = User.find_by_id(params[:user_id])
 
-      if @phone
-        render json: @phone, serializer: V1::PhoneSerializer, root: nil
+      if (authorize_user(user))
+        @phone = user.phones.find_by_id(params[:id])
+
+        if @phone
+          render json: @phone, serializer: V1::PhoneSerializer, root: nil
+        else
+          render json: { error: t('phone_show_error') }, status: :unprocessable_entity
+        end
       else
-        render json: { error: t('phone_show_error') }, status: :unprocessable_entity
+        authentication_error
       end
     end
 
