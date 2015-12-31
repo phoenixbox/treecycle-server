@@ -5,7 +5,8 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
-        order = Order.find_by_uuid(params[:order_id])
+        order = user.orders.find_by_uuid(params[:order_id])
+
         if order
           @package = order.packages.find_by_id(params[:id])
 
