@@ -6,8 +6,6 @@ Rails.application.routes.draw do
     resource :login, only: [:create], controller: :sessions
     resource :logout, only: [:destroy], controller: :sessions
 
-    # resources :phones, only: [:update, :show]
-    resources :addresses, only: [:index, :create, :show]
     resources :users, only: [:create, :update, :show] do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
