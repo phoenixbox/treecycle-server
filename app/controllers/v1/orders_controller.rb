@@ -9,21 +9,11 @@ module V1
     def index
       user = User.find_by_id(params[:user_id])
 
-      if user
+      if (authorize_user(user))
         @orders = user.orders
         render json: @orders, each_serializer: V1::OrderSerializer, root: nil
       else
-        errors = {
-          :errors => {
-            :id => SecureRandom.uuid,
-            :title => 'Record not found',
-            :meta => {
-              id: params[:user_id],
-              resource: 'User'
-            }
-          }
-        }
-        render json: errors, status: :unprocessable_entity
+        authentication_error
       end
     end
 
@@ -33,15 +23,12 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
-        @order = Order.find_by_uuid(params[:id])
-        if @order.user.id == user.id
-          if @order.update!(order_params)
-            redirect_to v1_user_order_path(@order.user.id , @order.id)
-          else
-            render json: { error: t('Order_update_error') }, status: :unprocessable_entity
-          end
+        @order = user.orders.find_by_uuid(params[:id])
+
+        if @order.update!(order_params)
+          redirect_to v1_user_order_path(@order.user.id , @order.id)
         else
-          authentication_error
+          render json: { error: t('Order_update_error') }, status: :unprocessable_entity
         end
       else
         authentication_error
@@ -49,19 +36,25 @@ module V1
     end
 
     def show
-      @order = Order.find(params[:id])
+      user = User.find_by_id(params[:user_id])
 
-      if @order
-        render json: @order, serializer: V1::OrderSerializer, root: nil
+      if (authorize_user(user))
+        @order = user.orders.find_by_id(params[:id])
+
+        if @order
+          render json: @order, serializer: V1::OrderSerializer, root: nil
+        else
+          render json: { error: t('Order_show_error') }, status: :unprocessable_entity
+        end
       else
-        render json: { error: t('Order_show_error') }, status: :unprocessable_entity
+        authentication_error
       end
     end
 
     def create
       user = User.find_by_id(params[:user_id])
 
-      if user
+      if (authorize_user(user))
         @incomplete_orders = user.orders.by_status("incomplete")
 
         if @incomplete_orders.length > 0
@@ -77,8 +70,7 @@ module V1
           end
         end
       else
-        errors = {:errors => {:id => 'user', :title => 'not found'}}
-        render json: errors, status: :unprocessable_entity
+        authentication_error
       end
     end
 
@@ -86,7 +78,8 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
-        order = Order.find_by_uuid(params[:id])
+        order = user.orders.find_by_uuid(params[:id])
+
         if order.destroy!
           redirect_to v1_user_orders_path(user.id)
         else
