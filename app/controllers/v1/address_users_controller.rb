@@ -24,7 +24,6 @@ module V1
         end
 
         if @existing_address
-          puts 'address already exists'
           render json: @existing_address, serializer: V1::AddressSerializer, root: nil
         else
           @address = user.addresses.create!(address_params)
@@ -41,12 +40,18 @@ module V1
     end
 
     def show
-      @address = Address.find(params[:id])
+      user = User.find_by_id(params[:user_id])
 
-      if @address
-        render json: @address, serializer: V1::AddressSerializer, root: nil
+      if (authorize_user(user))
+        @address = user.addresses.find_by_id(params[:id])
+
+        if @address
+          render json: @address, serializer: V1::AddressSerializer, root: nil
+        else
+          render json: { error: t('address_show_error') }, status: :unprocessable_entity
+        end
       else
-        render json: { error: t('address_show_error') }, status: :unprocessable_entity
+        authentication_error
       end
     end
 
