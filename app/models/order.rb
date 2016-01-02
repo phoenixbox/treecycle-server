@@ -19,13 +19,26 @@ class Order < ActiveRecord::Base
   private
 
   def mark_state_for_attributes
-    if self.status.to_s == "paid"
-      return
-    end
+    # If the order is complete update the status
+    # Complete - address - min 1 package - phone number - min 1 pickup date - amount set
+    if(self.address_id.present? && !self.packages.empty? && self.phone_id.present? && !self.pickup_dates.empty? && self.amount.present?)
+      new_status = "complete"
 
-    if self.address_id && self.packages.length && self.phone_id && self.pickup_dates && self.paid
-      self.status = "paid"
-      self.save
+      # if paid update the status to paid
+      if self.paid
+        new_status = "paid"
+      end
+
+      # if cancelled update the status to refunded
+      if self.cancelled
+        new_status = "refunded"
+      end
+
+      # Only call save if its new otherwise we get stuck in an after save callback loop
+      if self.status.to_s != new_status
+        self.status = new_status
+        self.save
+      end
     end
   end
 end
