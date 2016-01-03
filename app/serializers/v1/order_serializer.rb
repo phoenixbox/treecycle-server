@@ -2,6 +2,7 @@ module V1
   class OrderSerializer < ActiveModel::Serializer
     attributes  :id,
                 :uuid,
+                :user_email,
                 :status,
                 :amount,
                 :currency,
@@ -21,6 +22,10 @@ module V1
 
     def status
       object.status.to_s
+    end
+
+    def user_email
+      object.user.email
     end
 
     def address

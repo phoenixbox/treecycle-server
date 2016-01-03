@@ -10,7 +10,15 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
-        @orders = user.orders
+        admin_uid = params[:admin_uid]
+        admin_secret = params[:admin_secret]
+
+        if admin_uid && admin_uid == ENV['ADMIN_UID'] && admin_secret == ENV['ADMIN_SECRET']
+          @orders = Order.all
+        else
+          @orders = user.orders
+        end
+
         render json: @orders, each_serializer: V1::OrderSerializer, root: nil
       else
         authentication_error
@@ -93,7 +101,7 @@ module V1
     private
 
     def order_params
-      params.require(:order).permit(:uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:id, :date,
+      params.require(:order).permit(:admin_uid, :admin_secret, :uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:id, :date,
  :user_id, :_destroy])
     end
 

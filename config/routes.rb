@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     resources :users, only: [:create, :update, :show] do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
+    get '/admin/:user_id/orders', to: 'orders#index', as: 'admin_orders'
+
     resources :password_resets, only: [:create] do
       collection do
         post :reset
@@ -16,6 +18,7 @@ Rails.application.routes.draw do
     end
 
     get '/users/:id/stripe-id', to: 'users#stripe_id', as: 'user_stripe_id'
+
 
     post '/users-google', to: 'users#google', as: 'google_user'
     # Why arent these just nested routes?

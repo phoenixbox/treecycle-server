@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gem 'dotenv-rails', :groups => [:development, :test]
 
 ruby '2.2.3'
 gem 'rails', '4.2.1'
@@ -21,7 +22,6 @@ group :development, :test do
   gem 'byebug'
   gem 'web-console', '~> 2.0'
   gem 'spring'
-  gem "figaro", :git => "https://github.com/laserlemon/figaro.git", :tag => "0-stable"
   gem "pry"
 end
 

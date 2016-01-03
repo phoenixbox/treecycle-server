@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/laserlemon/figaro.git
-  revision: ebe68d042808d632b6a360855b91ffa26aea3660
-  tag: 0-stable
-  specs:
-    figaro (0.7.0)
-      bundler (~> 1.0)
-      rails (>= 3, < 5)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -67,6 +58,10 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    dotenv (2.0.2)
+    dotenv-rails (2.0.2)
+      dotenv (= 2.0.2)
+      railties (~> 4.0)
     erubis (2.7.0)
     execjs (2.6.0)
     faker (1.6.1)
@@ -179,8 +174,8 @@ DEPENDENCIES
   binding_of_caller
   byebug
   devise (~> 3.5.1)
+  dotenv-rails
   faker
-  figaro!
   jquery-rails
   pg (~> 0.18.2)
   pry
