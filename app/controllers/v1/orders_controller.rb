@@ -25,14 +25,7 @@ module V1
         admin_uid = params[:admin_uid]
         admin_secret = params[:admin_secret]
 
-        puts "*********************"
-        puts admin_uid
-        puts ENV["ADMIN_UID"]
-        puts admin_secret
-        puts ENV["ADMIN_SECRET"]
-        puts "**********"
-
-        if admin_uid && admin_uid == ENV["ADMIN_UID"] && admin_secret == ENV["ADMIN_SECRET"]
+        if admin_uid == ENV["ADMIN_UID"] && admin_secret == ENV["ADMIN_SECRET"]
           @orders = Order.all
           render json: @orders, each_serializer: V1::OrderSerializer, root: nil
         else
