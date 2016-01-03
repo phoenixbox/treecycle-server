@@ -10,16 +10,27 @@ module V1
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
+        @orders = user.orders
+
+        render json: @orders, each_serializer: V1::OrderSerializer, root: nil
+      else
+        authentication_error
+      end
+    end
+
+    def admin_index
+      user = User.find_by_id(params[:user_id])
+
+      if (authorize_user(user))
         admin_uid = params[:admin_uid]
         admin_secret = params[:admin_secret]
 
-        if admin_uid && admin_uid == ENV['ADMIN_UID'] && admin_secret == ENV['ADMIN_SECRET']
+        if admin_uid && admin_uid == ENV["ADMIN_UID"] && admin_secret == ENV["ADMIN_SECRET"]
           @orders = Order.all
+          render json: @orders, each_serializer: V1::OrderSerializer, root: nil
         else
-          @orders = user.orders
+          render json: { error: t('invalid_admin') }, status: :unprocessable_entity
         end
-
-        render json: @orders, each_serializer: V1::OrderSerializer, root: nil
       else
         authentication_error
       end
