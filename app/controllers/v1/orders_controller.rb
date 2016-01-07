@@ -54,6 +54,29 @@ module V1
       end
     end
 
+    def admin_update
+      user = User.find_by_id(params[:user_id])
+
+      if (authorize_user(user))
+        admin_uid = params[:admin_uid]
+        admin_secret = params[:admin_secret]
+
+        if admin_uid == ENV["ADMIN_UID"] && admin_secret == ENV["ADMIN_SECRET"]
+          @order = Order.find_by_id(params[:id])
+
+          if @order.update!(order_params)
+            render json: @order, serializer: V1::OrderSerializer, root: nil
+          else
+            render json: { error: t('Order_update_error') }, status: :unprocessable_entity
+          end
+        else
+          render json: { error: t('invalid_admin') }, status: :unprocessable_entity
+        end
+      else
+        authentication_error
+      end
+    end
+
     def show
       user = User.find_by_id(params[:user_id])
 
@@ -112,7 +135,7 @@ module V1
     private
 
     def order_params
-      params.require(:order).permit(:admin_uid, :admin_secret, :uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:id, :date,
+      params.require(:order).permit(:admin_uid, :admin_secret, :uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, :confirmation_date, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:id, :date,
  :user_id, :_destroy])
     end
 

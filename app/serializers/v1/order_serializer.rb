@@ -13,6 +13,9 @@ module V1
                 :address,
                 :phone_id,
                 :phone,
+                :phone,
+                :confirmation_date,
+                :confirmation_status,
                 :cancelled,
                 :created_at,
                 :updated_at
@@ -22,6 +25,10 @@ module V1
 
     def status
       object.status.to_s
+    end
+
+    def confirmation_status
+      object.confirmation_status.to_s
     end
 
     def user_email

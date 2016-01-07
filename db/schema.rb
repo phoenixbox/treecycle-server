@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151214180734) do
+ActiveRecord::Schema.define(version: 20160107041405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "hstore"
   enable_extension "citext"
+  enable_extension "hstore"
 
   create_table "address_users", force: :cascade do |t|
     t.integer  "address_id"
@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 20151214180734) do
   add_index "google_profiles", ["raw"], name: "index_google_profiles_on_raw", using: :gin
 
   create_table "orders", force: :cascade do |t|
-    t.string   "uuid",                        null: false
+    t.string   "uuid",                                             null: false
     t.integer  "status_cd"
     t.integer  "amount"
     t.integer  "address_id"
@@ -87,11 +87,13 @@ ActiveRecord::Schema.define(version: 20151214180734) do
     t.string   "currency"
     t.string   "charge_id"
     t.text     "description"
-    t.boolean  "paid",        default: false, null: false
+    t.boolean  "paid",                             default: false, null: false
     t.integer  "user_id"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.boolean  "cancelled",   default: false, null: false
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
+    t.boolean  "cancelled",                        default: false, null: false
+    t.integer  "confirmation_date",      limit: 8
+    t.integer  "confirmation_status_cd",           default: 0
   end
 
   add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree

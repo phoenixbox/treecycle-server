@@ -1,5 +1,7 @@
 class Order < ActiveRecord::Base
   STATUS_TYPES ||= YAML.load(File.open("#{Rails.root}/config/constants/status_types.yml", 'r'))
+  CONFIRMATION_TYPES ||= YAML.load(File.open("#{Rails.root}/config/constants/confirmation_types.yml", 'r'))
+  as_enum :confirmation_status, CONFIRMATION_TYPES
   as_enum :status, STATUS_TYPES
 
   validates :uuid, presence: true, uniqueness: true

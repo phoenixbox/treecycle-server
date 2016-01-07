@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
     end
     get '/admin/:user_id/orders', to: 'orders#admin_index', as: 'admin_orders'
+    put '/admin/:user_id/orders/:id', to: 'orders#admin_update', as: 'admin_order_update'
 
     resources :password_resets, only: [:create] do
       collection do
