@@ -29,6 +29,7 @@ module V1
         # Do need to add auth to token check?
         @user = auth.user
       end
+      # @user = User.find_by_email('phoenixbananabox@yahoo.ie')
 
       if @user
         render json: @user, new_user: new_user, serializer: V1::CreateSerializer, root: nil

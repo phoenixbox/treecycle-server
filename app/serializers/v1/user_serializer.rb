@@ -1,9 +1,9 @@
 module V1
   class UserSerializer < ActiveModel::Serializer
     attributes  :email
-                :display_name
-                :uuid
                 :access_token
+                :uuid
+                :display_name
                 :roles
                 :stripe_id
 

@@ -19,6 +19,9 @@ module V1
     end
 
     def admin_index
+      # @orders = Order.all
+      # render json: @orders, each_serializer: V1::OrderSerializer, root: nil
+
       user = User.find_by_id(params[:user_id])
 
       if (authorize_user(user))
@@ -135,8 +138,23 @@ module V1
     private
 
     def order_params
-      params.require(:order).permit(:admin_uid, :admin_secret, :uuid, :status_cd, :cancelled, :amount, :address_id, :phone_id, :currency, :charge_id, :description, :paid, :user_id, :confirmation_date, packages_attributes: [:type_cd, :size_value, :size_unit], pickup_dates_attributes: [:id, :date,
- :user_id, :_destroy])
+      params.require(:order).permit(
+      :admin_uid,
+      :admin_secret,
+      :uuid,
+      :status_cd,
+      :cancelled,
+      :amount,
+      :address_id,
+      :phone_id,
+      :currency,
+      :charge_id,
+      :description,
+      :paid,
+      :user_id,
+      :confirmation_date,
+      packages_attributes: [:type_cd, :size_value, :size_unit],
+      pickup_dates_attributes: [:id, :date, :user_id, :_destroy])
     end
 
     def invalid_order_errors orders

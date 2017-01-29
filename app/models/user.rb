@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   after_create :update_access_token!
 
   # Validations
-  # validates :email, uniqueness: true, :format => { :with =>  Devise::email_regexp }
+  validates :email, uniqueness: true, :format => { :with =>  Devise::email_regexp }
   # Associations
   has_many :authentications, dependent: :destroy
   has_many :phone_users, dependent: :destroy
@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   has_many :address_users, dependent: :destroy
   has_many :addresses, through: :address_users
 
+  # Convenience Query Macro
   has_many :orders do
     def by_status(status)
        where(:status_cd => status)
@@ -112,6 +113,7 @@ class User < ActiveRecord::Base
     })
   end
 
+  # Password regeneration on account reset
   def regenerate_reset_password_token
     token = generate_token_for("reset_password_token")
     self.update({reset_password_token: token})
